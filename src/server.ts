@@ -1,27 +1,20 @@
 import * as express from "express";
 import { createYoga, createSchema } from "graphql-yoga";
 import * as morgan from "morgan";
-import 'colors'
+import { resolvers } from './graphql/resolvers'
+import "colors";
+import { readFileSync } from "fs";
 const app = express();
 const schema = createSchema({
-  typeDefs: /* GraphQL */ `
-    type Query {
-      hello(name: String): String
-    }
-  `,
-  resolvers: {
-    Query: {
-      hello: (_: any, { name }) => `${name} world`,
-    },
-  },
+  typeDefs: readFileSync(require.resolve('./graphql/schema.graphql')).toString('utf-8'),
+  resolvers,
 });
 
 // Create a Yoga instance with a GraphQL schema.
 const yoga = createYoga({ schema, logging: "info" });
 morgan.token("graphql-query", (req: express.Request) => {
   const { query } = req.body;
-  console.log(req.body);
-  return `GRAPHQL`.yellow +`: \nQuery: ${query}`.blue;
+  return `GRAPHQL`.yellow + `: \nQuery: ${query}`.blue;
 });
 app.use(express.json());
 app.use(morgan(":graphql-query"));

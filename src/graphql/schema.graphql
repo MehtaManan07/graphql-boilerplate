@@ -1,0 +1,7 @@
+type Query {
+  hello(name: String): String
+}
+# readFileSync(require.resolve('./type-defs.graphql')).toString('utf-8')
+type Mutation {
+  register(email: String, password: String): Boolean
+}
